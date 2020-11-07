@@ -7,15 +7,6 @@ struct pq
     int size;
 };
 
-typedef struct pq_item
-{
-    int index;
-    int fInd;
-    int blockSize;
-    int actBlockSize;
-    FILE *file;
-} PQ_Item;
-
 PQ *PQ_init(int n)
 {
     PQ *pq = (PQ *)malloc(sizeof(PQ));
