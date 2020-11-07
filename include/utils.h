@@ -9,7 +9,9 @@
 int count_lines(FILE *fpIn);
 // Lê e retorna quantas dimensões um arquivo de entrada possui
 int determine_dimensions(FILE *fpIn);
-
+char **lineToStringVec(char *line, int m);
+int *lineToIntVec(char *line, int m);
+void freeStringVec(char **vec, int m);
 int read_input_file(FILE *fpIn);
 void write_output_file(FILE *fpOut);
 

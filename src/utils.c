@@ -105,6 +105,53 @@ int read_input_file(FILE *fpIn, char **names, double *coordenates)
     return 0;
 }
 
+/*
+* Retorna vetor de strings
+* Entrada: String com valores separados por virgula, tamanho do vetor
+* Saida: Vetor com os valores 
+*/
+char **lineToStringVec(char *line, int m)
+{
+    char *line2 = malloc(sizeof(char) * (strlen(line) + 1));
+    char *temp = line2;
+    strncpy(line2, line, (strlen(line) + 1));
+    char **vec = malloc(sizeof(char *) * m);
+    for (int i = 0; i < m; i++)
+    {
+        char *token = strtok(temp, ",");
+        vec[i] = malloc(sizeof(char) * (strlen(token) + 1));
+        strncpy(vec[i], token, (strlen(token) + 1));
+        temp = NULL;
+    }
+    free(line2);
+    return vec;
+}
+
+int *lineToIntVec(char *line, int m)
+{
+    char *line2 = malloc(sizeof(char) * (strlen(line) + 1));
+    char *temp = line2;
+    strncpy(line2, line, (strlen(line) + 1));
+    int *vec = malloc(sizeof(int) * m);
+    for (int i = 0; i < m; i++)
+    {
+        char *token = strtok(temp, ",");
+        vec[i] = atoi(token);
+        temp = NULL;
+    }
+    free(line2);
+    return vec;
+}
+
+void freeStringVec(char **vec, int m)
+{
+    for (int i = 0; i < m; i++)
+    {
+        free(vec[i]);
+    }
+    free(vec);
+}
+
 void write_output_file(FILE *fpOut)
 {
 }
