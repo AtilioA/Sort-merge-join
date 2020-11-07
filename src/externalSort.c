@@ -69,6 +69,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
             getline(&line, &n, file);
             if (feof(file))
             {
+                free(line);
                 break;
             }
             line[strlen(line) - 1] = '\0';
@@ -77,10 +78,6 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
             data.columsToCompare = colums;
             data.data = lineToStringVec(line, dataSize);
             free(line);
-            for (int j = 0; j < dataSize; j++)
-            {
-                printf("-%s\n", data.data[j]);
-            }
             vec[i] = data;
             blockRead++;
         }
@@ -92,10 +89,13 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
         for (int i = 0; i < blockRead; i++)
         {
             fprintf(devs[fileDest], "%s", vec[i].data[0]);
-            for (int j = 0; j < dataSize; j++)
+            free(vec[i].data[0]);
+            for (int j = 1; j < dataSize; j++)
             {
                 fprintf(devs[fileDest], ",%s", vec[i].data[j]);
+                free(vec[i].data[j]);
             }
+            free(vec[i].data);
             fprintf(devs[fileDest], "\n");
         }
         if (feof(file))
@@ -104,4 +104,10 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
         }
         fileDest++;
     }
+    for (int i = 0; i < devAmnt; i++)
+    {
+        fclose(devs[i]);
+    }
+    free(devName);
+    free(vec);
 }
