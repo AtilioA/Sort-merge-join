@@ -91,10 +91,6 @@ int PQ_size(PQ *pq)
 
 void PQ_finish(PQ *pq)
 {
-    for (int i = 1; i <= pq->size; i++)
-    {
-        free(pq->vec[i]);
-    }
     free(pq->vec);
     free(pq);
 }
