@@ -22,41 +22,31 @@ $(OBJ)/externalSort.o: $(SRC)/externalSort.c $(INC)/externalSort.h
 $(OBJ)/$(PROJETO).o: $(PROJETO).c
 	gcc -c $(CFLAGS) $(PROJETO).c -o "$(OBJ)/$(PROJETO).o"
 
-# Roda o programa com entrada 1
-# run_1: clean main
-# 	./$(EXE) entradas/1.txt 2 saidas/saida_1.txt
+# Roda o programa com exemplo da especificação
+run_1: clean main
+	./$(EXE) 3 1000000 1,0 0,2 input/ex1.txt input/ex2.txt output/fileOutEx.txt
 
 # # Roda o programa com entrada 2
-# run_2: clean main
-# 	./$(EXE) entradas/2.txt 4 saidas/saida_2.txt
-
+run_2: clean main
+	./$(EXE) 3 1000000 1,0 0,2 input/file1.txt input/file2.txt output/fileOut2.txt
 
 # # Roda o programa com entrada 3
 # run_3: clean main
-# 	./$(EXE) entradas/3.txt 5 saidas/saida_3.txt
-
-
-# # Roda o programa com entrada 4
-# run_4: clean main
-# 	./$(EXE) entradas/4.txt 5 saidas/saida_4.txt
-
-
-# # Roda o programa com entrada 5
-# run_5: clean main
-# 	./$(EXE) entradas/5.txt 10 saidas/saida_5.txt
+# 	./$(EXE) input/3.txt 5 output/saida_3.txt
 
 # Roda o programa com valgrind e flags úteis (entrada 3)
-# val: main
-# 	valgrind --leak-check=full -v --track-origins=yes \
-# 	--show-leak-kinds=all ./$(EXE) entradas/3.txt 5 saidas/saida.txt
+val: main
+	valgrind --leak-check=full -v --track-origins=yes \
+	--show-leak-kinds=all ./$(EXE) 3 1000000 1,0 0,2 input/file1.txt input/file2.txt output/fileOut2.txt
 
-# # Roda o programa com valgrind sem flags (entrada 3)
-# valzin: main
-# 	valgrind ./$(EXE) entradas/3.txt 5 saidas/saida_3.txt
+# Roda o programa com valgrind sem flags (entrada 3)
+valzin: main
+	valgrind ./$(EXE) input/3.txt 5 output/saida_3.txt
 
-# # Roda o programa com valgrind e salva resultados num .txt (entrada 3)
-# valtxt: main
-# 	valgrind --leak-check=full -v --show-leak-kinds=all --track-origins=yes --verbose --log-file="valgrind-out.txt" ./$(EXE) entradas/3.txt 5 saidas/saida_3.txt
+
+# Roda o programa com valgrind e salva resultados num .txt (entrada 3)
+valtxt: main
+	valgrind --leak-check=full -v --show-leak-kinds=all --track-origins=yes --verbose --log-file="valgrind-out.txt" ./$(EXE) 3 1000000 1,0 0,2 input/file1.txt input/file2.txt output/fileOut2.txt
 
 # Limpa objetos e o executável do programa
 clean:
