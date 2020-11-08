@@ -15,7 +15,7 @@ typedef struct pq_item
     Cmp_data data;
 } PQ_Item;
 
-int compareData(const void *a, const void *b)
+int compare_data(const void *a, const void *b)
 {
     Cmp_data data1 = *(Cmp_data *)a;
     Cmp_data data2 = *(Cmp_data *)b;
@@ -28,13 +28,13 @@ int compareData(const void *a, const void *b)
     }
     return 0;
 }
-int comparePQ_Item(const void *a, const void *b)
+int compare_PQ_Item(const void *a, const void *b)
 {
     PQ_Item *f1 = (PQ_Item *)a;
     PQ_Item *f2 = (PQ_Item *)b;
     if (f1->fileLoop == f2->fileLoop)
     {
-        return compareData(&(f1->data), &(f2->data)) > 0;
+        return compare_data(&(f1->data), &(f2->data)) > 0;
     }
     else
     {
@@ -68,7 +68,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
         devs[i] = fopen(devName, "w");
     }
     int N = 0;
-    Cmp_data *vec = malloc(sizeof(Cmp_data) * M);
+    Cmp_data *array = malloc(sizeof(Cmp_data) * M);
     int fileDest = P;
     while (!feof(file))
     {
@@ -88,26 +88,26 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
             Cmp_data data;
             data.columsSize = columsAmnt;
             data.columsToCompare = colums;
-            data.data = lineToStringVec(line, dataSize);
+            data.data = line_to_string_array(line, dataSize);
             free(line);
-            vec[i] = data;
+            array[i] = data;
             blockRead++;
         }
-        qsort(vec, blockRead, sizeof(Cmp_data), compareData);
+        qsort(array, blockRead, sizeof(Cmp_data), compare_data);
         if (fileDest >= 2 * P)
         {
             fileDest = P;
         }
         for (int i = 0; i < blockRead; i++)
         {
-            fprintf(devs[fileDest], "%s", vec[i].data[0]);
-            free(vec[i].data[0]);
+            fprintf(devs[fileDest], "%s", array[i].data[0]);
+            free(array[i].data[0]);
             for (int j = 1; j < dataSize; j++)
             {
-                fprintf(devs[fileDest], ",%s", vec[i].data[j]);
-                free(vec[i].data[j]);
+                fprintf(devs[fileDest], ",%s", array[i].data[j]);
+                free(array[i].data[j]);
             }
-            free(vec[i].data);
+            free(array[i].data);
             fprintf(devs[fileDest], "\n");
         }
         if (feof(file))
@@ -148,9 +148,9 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
                 continue;
             }
             line[strlen(line) - 1] = '\0';
-            item->data.data = lineToStringVec(line, dataSize);
+            item->data.data = line_to_string_array(line, dataSize);
             free(line);
-            PQ_insert(priQueue, item, comparePQ_Item);
+            PQ_insert(priQueue, item, compare_PQ_Item);
         }
         for (int j = fileDest; j < fileDest + P; j++)
         {
@@ -166,7 +166,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
                 for (int l = 0; l < block * P; l++)
                 {
                     //printf("/%d %d", PQ_size(priQueue), PQ_empty(priQueue));
-                    item = PQ_delmin(priQueue, comparePQ_Item);
+                    item = PQ_del_min(priQueue, compare_PQ_Item);
                     if (item == NULL)
                     {
                         break;
@@ -176,7 +176,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
                     {
                         item->actBlockSize = item->blockSize;
                         item->fileLoop++;
-                        PQ_insert(priQueue, item, comparePQ_Item);
+                        PQ_insert(priQueue, item, compare_PQ_Item);
                         l--;
                         continue;
                     }
@@ -186,7 +186,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
                     }
                     if (item->fileLoop != fileLoop)
                     {
-                        PQ_insert(priQueue, item, comparePQ_Item);
+                        PQ_insert(priQueue, item, compare_PQ_Item);
                         break;
                     }
                     //printf("af %s %d %d\\\n", item->data.data[0], item->fileLoop, fileLoop);
@@ -200,7 +200,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
                     //printf("\n");
                     fprintf(devs[j], "\n");
                     //printf("%d %d\n", j, l);
-                    freeStringVec(item->data.data, dataSize);
+                    free_string_array(item->data.data, dataSize);
                     line = NULL;
                     n = 0;
                     getline(&line, &n, devs[item->deviceIndex]);
@@ -217,9 +217,9 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
                     }
                     line[strlen(line) - 1] = '\0';
                     //printf("%s-a\n", line);
-                    item->data.data = lineToStringVec(line, dataSize);
+                    item->data.data = line_to_string_array(line, dataSize);
                     free(line);
-                    PQ_insert(priQueue, item, comparePQ_Item);
+                    PQ_insert(priQueue, item, compare_PQ_Item);
                 }
             }
         }
@@ -247,5 +247,5 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
     }
     PQ_finish(priQueue);
     free(devName);
-    free(vec);
+    free(array);
 }

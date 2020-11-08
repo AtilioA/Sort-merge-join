@@ -15,11 +15,11 @@ PQ *PQ_init(int n);
 
 void PQ_insert(PQ *pq, void *item, int (*compare)(const void *, const void *));
 
-void *PQ_delmin(PQ *pq, int (*compare)(const void *, const void *));
+void *PQ_del_min(PQ *pq, int (*compare)(const void *, const void *));
 
 void *PQ_min(PQ *pq);
 
-void PQ_FixPri(PQ *pq, int (*compare)(const void *, const void *));
+void PQ_fix_first(PQ *pq, int (*compare)(const void *, const void *));
 
 bool PQ_empty(PQ *pq);
 

@@ -5,6 +5,7 @@
     "editor.insertSpaces": true,
     "editor.formatOnSave": true,
     "files.associations": {
-        "cmath": "c"
+        "cmath": "c",
+        "array": "c"
     },
 }
