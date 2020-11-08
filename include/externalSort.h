@@ -7,6 +7,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt);
+FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputName);
 
 #endif

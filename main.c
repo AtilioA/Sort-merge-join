@@ -37,14 +37,15 @@ int main(int argc, char *argv[])
     FILE *file1 = fopen(fileIn1, "r");
     FILE *file2 = fopen(fileIn2, "r");
 
-    FILE *file1Sort = sort(file1, M, P, fieldsArrayF1, commaAmnt + 1);
-    // FILE *file2Sort = sort(file2, M, P, fieldsArrayF2, commaAmnt + 1);
+    FILE *file1Sort = sort(file1, M, P, fieldsArrayF1, commaAmnt + 1, "sorted1.txt");
+    FILE *file2Sort = sort(file2, M, P, fieldsArrayF2, commaAmnt + 1, "sorted2.txt");
 
     free(fieldsArrayF1);
     free(fieldsArrayF2);
 
     fclose(file1);
     fclose(file2);
-
+    fclose(file1Sort);
+    fclose(file2Sort);
     return EXIT_SUCCESS;
 }
