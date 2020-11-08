@@ -23,14 +23,22 @@ $(OBJ)/$(PROJETO).o: $(PROJETO).c
 	gcc -c $(CFLAGS) $(PROJETO).c -o "$(OBJ)/$(PROJETO).o"
 
 # Roda o programa com exemplo da especificação
-run_1: clean main
+run_ex: clean main
 	./$(EXE) 3 1000000 1,0 0,2 input/ex1.txt input/ex2.txt output/fileOutEx.txt
+	code -r sorted1.txt
+	code -r sorted2.txt
 
-# # Roda o programa com entrada 2
+#  Roda o programa com entrada 1
+run_1: clean main
+	./$(EXE) 3 1000000 0,1,4 4,0,1 input/1/file1.txt input/1/file2.txt output/file_2.txt
+	code -r output/file_1.txt
+
+#  Roda o programa com entrada 2
 run_2: clean main
-	./$(EXE) 3 1000000 1,0 0,2 input/file1.txt input/file2.txt output/fileOut2.txt
+	./$(EXE) 3 1000000 0,1,4 4,0,1 input/2/file1.txt input/2/file2.txt output/file_2.txt
+	code -r output/file_2.txt
 
-# # Roda o programa com entrada 3
+#  Roda o programa com entrada 3
 # run_3: clean main
 # 	./$(EXE) input/3.txt 5 output/saida_3.txt
 
@@ -52,3 +60,4 @@ valtxt: main
 clean:
 	-rm $(OBJ)/*.o
 	-rm $(EXE)
+	-rm *.txt
