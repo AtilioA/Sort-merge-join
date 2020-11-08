@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     // Guarda nome do arquivo de saída
     char *fileOut = argv[7];
 
-    // Conta quantidade de vírgulas (ambos os arquivos devem ter a mesma quantidade de campos)
+    // Conta quantidade de vírgulas (ambos os arquivos devem receber a mesma quantidade de campos a serem ordenados)
     int commaAmnt = count_commas(file1Fields);
 
     // Transforma entrada de campos em um vetor de inteiros

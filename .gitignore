@@ -57,3 +57,4 @@ trab*
 *.zip
 *.png
 *.js
+output/*.txt
