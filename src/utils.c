@@ -2,6 +2,21 @@
 #include <stdio.h>
 #include <string.h>
 
+int count_commas(char *string)
+{
+    int commaAmnt = 0;
+
+    for (int i = 0; i < strlen(string); i++)
+    {
+        if (string[i] == ',')
+        {
+            commaAmnt++;
+        }
+    }
+
+    return commaAmnt;
+}
+
 int count_lines(FILE *fpIn)
 {
     char c;
@@ -23,31 +38,6 @@ int count_lines(FILE *fpIn)
     }
 
     return lines;
-}
-
-int determine_dimensions(FILE *fpIn)
-{
-    char *lineBuffer = NULL;
-    size_t lineBufferSize = 0;
-
-    if (getline(&lineBuffer, &lineBufferSize, fpIn) >= 0)
-    {
-
-        // Percorre a string da linha contando a ocorrência de vírgulas (neste caso indicam número de dimensões)
-        int i, nDimensions;
-        for (i = 0, nDimensions = 0; lineBuffer[i]; i++)
-        {
-            nDimensions += (lineBuffer[i] == ',');
-        }
-
-        free(lineBuffer);
-
-        return nDimensions;
-    }
-    else
-    {
-        return -1;
-    }
 }
 
 int read_input_file(FILE *fpIn, char **names, double *coordenates)
@@ -108,48 +98,48 @@ int read_input_file(FILE *fpIn, char **names, double *coordenates)
 /*
 * Retorna vetor de strings
 * Entrada: String com valores separados por virgula, tamanho do vetor
-* Saida: Vetor com os valores 
+* Saida: Vetor com os valores
 */
-char **lineToStringVec(char *line, int m)
+char **line_to_string_array(char *line, int m)
 {
     char *line2 = malloc(sizeof(char) * (strlen(line) + 1));
     char *temp = line2;
     strncpy(line2, line, (strlen(line) + 1));
-    char **vec = malloc(sizeof(char *) * m);
+    char **array = malloc(sizeof(char *) * m);
     for (int i = 0; i < m; i++)
     {
         char *token = strtok(temp, ",");
-        vec[i] = malloc(sizeof(char) * (strlen(token) + 1));
-        strncpy(vec[i], token, (strlen(token) + 1));
+        array[i] = malloc(sizeof(char) * (strlen(token) + 1));
+        strncpy(array[i], token, (strlen(token) + 1));
         temp = NULL;
     }
     free(line2);
-    return vec;
+    return array;
 }
 
-int *lineToIntVec(char *line, int m)
+int *line_to_int_array(char *line, int m)
 {
     char *line2 = malloc(sizeof(char) * (strlen(line) + 1));
     char *temp = line2;
     strncpy(line2, line, (strlen(line) + 1));
-    int *vec = malloc(sizeof(int) * m);
+    int *array = malloc(sizeof(int) * m);
     for (int i = 0; i < m; i++)
     {
         char *token = strtok(temp, ",");
-        vec[i] = atoi(token);
+        array[i] = atoi(token);
         temp = NULL;
     }
     free(line2);
-    return vec;
+    return array;
 }
 
-void freeStringVec(char **vec, int m)
+void free_string_array(char **array, int m)
 {
     for (int i = 0; i < m; i++)
     {
-        free(vec[i]);
+        free(array[i]);
     }
-    free(vec);
+    free(array);
 }
 
 void write_output_file(FILE *fpOut)

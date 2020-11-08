@@ -12,29 +12,37 @@ int main(int argc, char *argv[])
     {
         return EXIT_FAILURE;
     }
+
+    // Guarda a quantidade de dispositivos disponíveis
     int P = atoi(argv[1]);
+    // Guarda a quantidade de registros que cabem na memória principal
     int M = atoi(argv[2]);
-    char *iFields = argv[3];
-    char *jFields = argv[4];
-    int commaAmnt = 0;
-    for (int i = 0; i < strlen(iFields); i++)
-    {
-        if (iFields[i] == ',')
-        {
-            commaAmnt++;
-        }
-    }
-    int *vec = lineToIntVec(iFields, commaAmnt + 1);
-    // Guarda nome do arquivo de entrada dos argumentos
+    // Guarda os campos a serem ordenados no primeiro arquivo
+    char *file1Fields = argv[3];
+    // Guarda os campos a serem ordenados no segundo arquivo
+    char *file2Fields = argv[4];
+    // Guarda nome dos arquivos de entrada
     char *fileIn1 = argv[5];
     char *fileIn2 = argv[6];
-    FILE *file1 = fopen(fileIn1, "r");
-    FILE *file2 = fopen(fileIn2, "r");
     // Guarda nome do arquivo de saída
-    FILE *teste = sort(file1, M, P, vec, commaAmnt + 1);
     char *fileOut = argv[7];
 
-    free(vec);
+    // Conta quantidade de vírgulas (ambos os arquivos devem ter a mesma quantidade de campos)
+    int commaAmnt = count_commas(file1Fields);
+
+    // Transforma entrada de campos em um vetor de inteiros
+    int *fieldsArrayF1 = line_to_int_array(file1Fields, commaAmnt + 1);
+    int *fieldsArrayF2 = line_to_int_array(file2Fields, commaAmnt + 1);
+
+    FILE *file1 = fopen(fileIn1, "r");
+    FILE *file2 = fopen(fileIn2, "r");
+
+    FILE *file1Sort = sort(file1, M, P, fieldsArrayF1, commaAmnt + 1);
+    // FILE *file2Sort = sort(file2, M, P, fieldsArrayF2, commaAmnt + 1);
+
+    free(fieldsArrayF1);
+    free(fieldsArrayF2);
+
     fclose(file1);
     fclose(file2);
 
