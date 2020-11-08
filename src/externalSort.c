@@ -42,7 +42,7 @@ int compare_PQ_Item(const void *a, const void *b)
     }
 }
 
-FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
+FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputName)
 {
     int devAmnt = 2 * P;
     char *line = NULL;
@@ -60,16 +60,17 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
     rewind(file);
     free(line);
     FILE *devs[devAmnt];
-    int devNameSize = floor(log10(devAmnt) + log10(fileno(file))) + 8;
+    int devNameSize = floor(log10(devAmnt) + 1) + 5;
     char *devName = malloc(sizeof(char) * devNameSize);
     for (int i = 0; i < devAmnt; i++)
     {
-        snprintf(devName, sizeof(char) * devNameSize, "%d_%d.txt", fileno(file), i);
+        snprintf(devName, sizeof(char) * devNameSize, "%d.txt", i);
         devs[i] = fopen(devName, "w");
     }
     int N = 0;
     Cmp_data *array = malloc(sizeof(Cmp_data) * M);
     int fileDest = P;
+    //Distribuindo os elementos para P até 2P - 1 arquivos
     while (!feof(file))
     {
         int blockRead = 0;
@@ -121,8 +122,6 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
     int block = M;
     int k = ceil(log(N / M) / log(P)) + 1;
     PQ *priQueue = PQ_init(P);
-    //printf("%d %d %d %d\n", N, M, P, k);
-
     for (int i = 0; i < k; i++)
     {
         PQ_Item *item;
@@ -136,7 +135,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
             item->data.columsToCompare = colums;
             item->data.columsSize = columsAmnt;
             fclose(devs[j]);
-            snprintf(devName, sizeof(char) * devNameSize, "%d_%d.txt", fileno(file), j);
+            snprintf(devName, sizeof(char) * devNameSize, "%d.txt", j);
             devs[j] = fopen(devName, "r");
             line = NULL;
             n = 0;
@@ -155,7 +154,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
         for (int j = fileDest; j < fileDest + P; j++)
         {
             fclose(devs[j]);
-            snprintf(devName, sizeof(char) * devNameSize, "%d_%d.txt", fileno(file), j);
+            snprintf(devName, sizeof(char) * devNameSize, "%d.txt", j);
             devs[j] = fopen(devName, "w");
         }
         int fileLoop = 0;
@@ -165,13 +164,11 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
             {
                 for (int l = 0; l < block * P; l++)
                 {
-                    //printf("/%d %d", PQ_size(priQueue), PQ_empty(priQueue));
                     item = PQ_del_min(priQueue, compare_PQ_Item);
                     if (item == NULL)
                     {
                         break;
                     }
-                    //printf(" %s %d %d %d bf ", item->data.data[0], item->fileLoop, fileLoop, item->actBlockSize);
                     if (item->actBlockSize == 0)
                     {
                         item->actBlockSize = item->blockSize;
@@ -189,17 +186,12 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
                         PQ_insert(priQueue, item, compare_PQ_Item);
                         break;
                     }
-                    //printf("af %s %d %d\\\n", item->data.data[0], item->fileLoop, fileLoop);
                     fprintf(devs[j], "%s", item->data.data[0]);
-                    //printf("%s", item->data.data[0]);
                     for (int m = 1; m < dataSize; m++)
                     {
-                        //printf(",%s", item->data.data[m]);
                         fprintf(devs[j], ",%s", item->data.data[m]);
                     }
-                    //printf("\n");
                     fprintf(devs[j], "\n");
-                    //printf("%d %d\n", j, l);
                     free_string_array(item->data.data, dataSize);
                     line = NULL;
                     n = 0;
@@ -245,7 +237,11 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt)
     {
         fclose(devs[i]);
     }
+    //printf("%d\n", fileSrc);
+    snprintf(devName, sizeof(char) * devNameSize, "%d.txt", fileSrc);
+    rename(devName, outputName);
     PQ_finish(priQueue);
     free(devName);
     free(array);
+    return fopen(outputName, "r");
 }
