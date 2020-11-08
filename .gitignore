@@ -58,3 +58,4 @@ trab*
 *.png
 *.js
 output/*.txt
+input/python/*.txt

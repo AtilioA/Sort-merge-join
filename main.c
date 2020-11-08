@@ -47,5 +47,6 @@ int main(int argc, char *argv[])
     fclose(file2);
     fclose(file1Sort);
     fclose(file2Sort);
+    
     return EXIT_SUCCESS;
 }
