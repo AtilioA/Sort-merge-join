@@ -5,8 +5,8 @@
 int count_commas(char *string)
 {
     int commaAmnt = 0;
-
-    for (int i = 0; i < strlen(string); i++)
+    int len = strlen(string);
+    for (int i = 0; i < len; i++)
     {
         if (string[i] == ',')
         {

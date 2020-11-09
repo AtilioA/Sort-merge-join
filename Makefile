@@ -45,7 +45,7 @@ run_2: clean main
 # Roda o programa com valgrind e flags úteis (entrada 3)
 val: main
 	valgrind --leak-check=full -v --track-origins=yes \
-	--show-leak-kinds=all ./$(EXE) 3 1000000 1,0 0,2 input/file1.txt input/file2.txt output/fileOut2.txt
+	--show-leak-kinds=all ./$(EXE) 3 1000000 1,0 0,2 input/1/file1.txt input/1/file2.txt output/fileOut2.txt
 
 # Roda o programa com valgrind sem flags (entrada 3)
 valzin: main
