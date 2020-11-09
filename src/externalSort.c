@@ -74,6 +74,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
     while (!feof(file))
     {
         int blockRead = 0;
+        //Pega bloco de tamanho M do arquivo de entrada
         for (int i = 0; i < M; i++)
         {
             line = NULL;
@@ -94,11 +95,13 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
             array[i] = data;
             blockRead++;
         }
+        //Ordena o bloco
         qsort(array, blockRead, sizeof(Cmp_data), compare_data);
         if (fileDest >= 2 * P)
         {
             fileDest = P;
         }
+        //Escreve no dispositivo fileDest
         for (int i = 0; i < blockRead; i++)
         {
             fprintf(devs[fileDest], "%s", array[i].data[0]);
@@ -125,6 +128,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
     for (int i = 0; i < k; i++)
     {
         PQ_Item *item;
+        //Pega a primeira linha de cada dispositivo de entrada e coloca em uma fila de prioridade
         for (int j = fileSrc; j < fileSrc + P; j++)
         {
             item = malloc(sizeof(PQ_Item));
@@ -151,6 +155,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
             free(line);
             PQ_insert(priQueue, item, compare_PQ_Item);
         }
+        //Reabre os dispositivos de saida como escrita
         for (int j = fileDest; j < fileDest + P; j++)
         {
             fclose(devs[j]);
@@ -162,6 +167,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
         {
             for (int j = fileDest; j < fileDest + P; j++, fileLoop++)
             {
+                //Para cada dispositivo de saida recolhe M*P^k linhas no maximo
                 for (int l = 0; l < block * P; l++)
                 {
                     item = PQ_del_min(priQueue, compare_PQ_Item);
@@ -169,7 +175,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
                     {
                         break;
                     }
-                    if (item->actBlockSize == 0)
+                    if (item->actBlockSize == 0) //Tamanho maximo do bloco do dispositivo de entrada atingido, próximo dispositivo de saida recebera dessa entrada
                     {
                         item->actBlockSize = item->blockSize;
                         item->fileLoop++;
@@ -181,7 +187,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
                     {
                         item->actBlockSize--;
                     }
-                    if (item->fileLoop != fileLoop)
+                    if (item->fileLoop != fileLoop) // Não há mais dispositivos para esse dispositivo de saida, vá para o pŕoximo
                     {
                         PQ_insert(priQueue, item, compare_PQ_Item);
                         break;
@@ -196,19 +202,17 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
                     line = NULL;
                     n = 0;
                     getline(&line, &n, devs[item->deviceIndex]);
-                    if (feof(devs[item->deviceIndex]) || line == NULL)
+                    if (feof(devs[item->deviceIndex]) || line == NULL) // Dispositivo de entrada não possui mais dados
                     {
                         if (line != NULL)
                         {
                             free(line);
                         }
-                        //printf("aaa %d\n", item->deviceIndex);
                         free(item);
                         l--;
                         continue;
                     }
                     line[strlen(line) - 1] = '\0';
-                    //printf("%s-a\n", line);
                     item->data.data = line_to_string_array(line, dataSize);
                     free(line);
                     PQ_insert(priQueue, item, compare_PQ_Item);
