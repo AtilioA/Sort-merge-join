@@ -12,7 +12,7 @@ PQ *PQ_init(int n)
     PQ *pq = (PQ *)malloc(sizeof(PQ));
     pq->size = 0;
     pq->array = (void **)malloc(sizeof(void *) * (n + 1));
-    
+
     return pq;
 }
 
@@ -95,7 +95,7 @@ int PQ_size(PQ *pq)
     return pq->size;
 }
 
-void PQ_finish(PQ *pq)
+void PQ_free(PQ *pq)
 {
     free(pq->array);
     free(pq);

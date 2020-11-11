@@ -244,7 +244,7 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
     //printf("%d\n", fileSrc);
     snprintf(devName, sizeof(char) * devNameSize, "%d.txt", fileSrc);
     rename(devName, outputName);
-    PQ_finish(priQueue);
+    PQ_free(priQueue);
     free(devName);
     free(array);
     return fopen(outputName, "r");
