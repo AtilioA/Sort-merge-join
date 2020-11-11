@@ -1,11 +1,13 @@
 #include "../include/external_sort.h"
 #include <unistd.h>
+
 typedef struct cmpData
 {
     char **data;
     int *fieldsToCompare;
     int fieldsSize;
 } Cmp_data;
+
 typedef struct pq_item
 {
     int deviceIndex;
@@ -17,21 +19,25 @@ typedef struct pq_item
 
 int compare_data(const void *a, const void *b)
 {
-    Cmp_data data1 = *(Cmp_data *)a;
-    Cmp_data data2 = *(Cmp_data *)b;
-    for (int i = 0; i < data1.fieldsSize; i++)
+    Cmp_data dataFile1 = *(Cmp_data *)a;
+    Cmp_data dataFile2 = *(Cmp_data *)b;
+
+    // Retorna a primeira ocorrência em que os dois campos são iguais
+    for (int i = 0; i < dataFile1.fieldsSize; i++)
     {
-        if (strcmp(data1.data[data1.fieldsToCompare[i]], data2.data[data2.fieldsToCompare[i]]) != 0)
+        if (strcmp(dataFile1.data[dataFile1.fieldsToCompare[i]], dataFile2.data[dataFile2.fieldsToCompare[i]]) != 0)
         {
-            return strcmp(data1.data[data1.fieldsToCompare[i]], data2.data[data2.fieldsToCompare[i]]);
+            return strcmp(dataFile1.data[dataFile1.fieldsToCompare[i]], dataFile2.data[dataFile2.fieldsToCompare[i]]);
         }
     }
+
     return 0;
 }
 int compare_PQ_Item(const void *a, const void *b)
 {
     PQ_Item *f1 = (PQ_Item *)a;
     PQ_Item *f2 = (PQ_Item *)b;
+
     if (f1->fileLoop == f2->fileLoop)
     {
         return compare_data(&(f1->data), &(f2->data)) > 0;
@@ -44,73 +50,81 @@ int compare_PQ_Item(const void *a, const void *b)
 
 FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputName)
 {
-    int devAmnt = 2 * P;
+    int deviceAmnt = 2 * P;
     char *line = NULL;
     long unsigned int n = 0;
-    getline(&line, &n, file);
-    int dataSize = 0;
-    for (int i = 0; i < strlen(line); i++)
+
+    // Atribui nomes aos dispositivos e cria arquivos
+    FILE *devs[deviceAmnt];
+    int deviceNameSize = floor(log10(deviceAmnt) + 1) + 5;
+    char *deviceName = malloc(sizeof(char) * deviceNameSize);
+    for (int i = 0; i < deviceAmnt; i++)
     {
-        if (line[i] == ',')
-        {
-            dataSize++;
-        }
+        snprintf(deviceName, sizeof(char) * deviceNameSize, "%d.txt", i);
+        devs[i] = fopen(deviceName, "w");
     }
-    dataSize++;
-    rewind(file);
-    free(line);
-    FILE *devs[devAmnt];
-    int devNameSize = floor(log10(devAmnt) + 1) + 5;
-    char *devName = malloc(sizeof(char) * devNameSize);
-    for (int i = 0; i < devAmnt; i++)
-    {
-        snprintf(devName, sizeof(char) * devNameSize, "%d.txt", i);
-        devs[i] = fopen(devName, "w");
-    }
+
     int N = 0;
     Cmp_data *array = malloc(sizeof(Cmp_data) * M);
     int fileDest = P;
-    //Distribuindo os elementos para P até 2P - 1 arquivos
+
+    // Conta tamanho dos dados
+    getline(&line, &n, file);
+    // Por que + 1?
+    int dataSize = count_commas(line) + 1;
+    rewind(file);
+    free(line);
+
+    // Distribui elementos para P até 2P - 1 arquivos
     while (!feof(file))
     {
         int blockRead = 0;
-        //Pega bloco de tamanho M do arquivo de entrada
+        // Pega bloco de tamanho M do arquivo de entrada
         for (int i = 0; i < M; i++)
         {
             line = NULL;
             n = 0;
+
             getline(&line, &n, file);
             if (feof(file))
             {
                 free(line);
                 break;
             }
+
             N++;
             line[strlen(line) - 1] = '\0';
+
             Cmp_data data;
             data.fieldsSize = fieldsAmnt;
             data.fieldsToCompare = fields;
             data.data = line_to_string_array(line, dataSize);
+
             free(line);
             array[i] = data;
             blockRead++;
         }
-        //Ordena o bloco
+
+        // Ordena o bloco
         qsort(array, blockRead, sizeof(Cmp_data), compare_data);
+
         if (fileDest >= 2 * P)
         {
             fileDest = P;
         }
-        //Escreve no dispositivo fileDest
+
+        // Escreve no dispositivo fileDest
         for (int i = 0; i < blockRead; i++)
         {
             fprintf(devs[fileDest], "%s", array[i].data[0]);
             free(array[i].data[0]);
+
             for (int j = 1; j < dataSize; j++)
             {
                 fprintf(devs[fileDest], ",%s", array[i].data[j]);
                 free(array[i].data[j]);
             }
+
             free(array[i].data);
             fprintf(devs[fileDest], "\n");
         }
@@ -118,17 +132,20 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
         {
             break;
         }
+
         fileDest++;
     }
+
     fileDest = 0;
     int fileSrc = P;
     int block = M;
     int k = ceil(log(N / M) / log(P)) + 1;
     PQ *priQueue = PQ_init(P);
+
     for (int i = 0; i < k; i++)
     {
         PQ_Item *item;
-        //Pega a primeira linha de cada dispositivo de entrada e coloca em uma fila de prioridade
+        // Pega a primeira linha de cada dispositivo de entrada e coloca em uma fila de prioridade
         for (int j = fileSrc; j < fileSrc + P; j++)
         {
             item = malloc(sizeof(PQ_Item));
@@ -138,11 +155,14 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
             item->fileLoop = 0;
             item->data.fieldsToCompare = fields;
             item->data.fieldsSize = fieldsAmnt;
+
             fclose(devs[j]);
-            snprintf(devName, sizeof(char) * devNameSize, "%d.txt", j);
-            devs[j] = fopen(devName, "r");
+            snprintf(deviceName, sizeof(char) * deviceNameSize, "%d.txt", j);
+            devs[j] = fopen(deviceName, "r");
+
             line = NULL;
             n = 0;
+
             getline(&line, &n, devs[j]);
             if (feof(devs[j]))
             {
@@ -150,57 +170,69 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
                 free(item);
                 continue;
             }
+
             line[strlen(line) - 1] = '\0';
             item->data.data = line_to_string_array(line, dataSize);
-            free(line);
             PQ_insert(priQueue, item, compare_PQ_Item);
+
+            free(line);
         }
-        //Reabre os dispositivos de saida como escrita
+        // Reabre os dispositivos de saída como escrita
         for (int j = fileDest; j < fileDest + P; j++)
         {
             fclose(devs[j]);
-            snprintf(devName, sizeof(char) * devNameSize, "%d.txt", j);
-            devs[j] = fopen(devName, "w");
+            snprintf(deviceName, sizeof(char) * deviceNameSize, "%d.txt", j);
+            devs[j] = fopen(deviceName, "w");
         }
         int fileLoop = 0;
         while (!PQ_empty(priQueue))
         {
             for (int j = fileDest; j < fileDest + P; j++, fileLoop++)
             {
-                //Para cada dispositivo de saida recolhe M*P^k linhas no maximo
+                // Para cada dispositivo de saída ,recolhe M*P^k linhas no máximo
                 for (int l = 0; l < block * P; l++)
                 {
                     item = PQ_del_min(priQueue, compare_PQ_Item);
-                    if (item == NULL)
+                    if (item == NULL) // heap vazia?
                     {
                         break;
                     }
-                    if (item->actBlockSize == 0) //Tamanho maximo do bloco do dispositivo de entrada atingido, próximo dispositivo de saida recebera dessa entrada
+
+                    if (item->actBlockSize == 0) // Tamanho máximo do bloco do dispositivo de entrada atingido, próximo dispositivo de saída receberá dessa entrada
                     {
                         item->actBlockSize = item->blockSize;
                         item->fileLoop++;
+
                         PQ_insert(priQueue, item, compare_PQ_Item);
+
                         l--;
+
                         continue;
                     }
-                    else
+                    else // Bloco ainda comporta entrada
                     {
                         item->actBlockSize--;
                     }
-                    if (item->fileLoop != fileLoop) // Não há mais dispositivos para esse dispositivo de saida, vá para o pŕoximo
+
+                    if (item->fileLoop != fileLoop) // Não há mais dispositivos para esse dispositivo de saída, vá para o pŕoximo
                     {
                         PQ_insert(priQueue, item, compare_PQ_Item);
                         break;
                     }
+
                     fprintf(devs[j], "%s", item->data.data[0]);
+
                     for (int m = 1; m < dataSize; m++)
                     {
                         fprintf(devs[j], ",%s", item->data.data[m]);
                     }
                     fprintf(devs[j], "\n");
+
                     free_string_array(item->data.data, dataSize);
+
                     line = NULL;
                     n = 0;
+
                     getline(&line, &n, devs[item->deviceIndex]);
                     if (feof(devs[item->deviceIndex]) || line == NULL) // Dispositivo de entrada não possui mais dados
                     {
@@ -209,13 +241,17 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
                             free(line);
                         }
                         free(item);
+
                         l--;
+
                         continue;
                     }
                     line[strlen(line) - 1] = '\0';
                     item->data.data = line_to_string_array(line, dataSize);
-                    free(line);
+
                     PQ_insert(priQueue, item, compare_PQ_Item);
+                    
+                    free(line);
                 }
             }
         }
@@ -237,15 +273,18 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
         }
         block *= P;
     }
-    for (int i = 0; i < devAmnt; i++)
+    for (int i = 0; i < deviceAmnt; i++)
     {
         fclose(devs[i]);
     }
-    //printf("%d\n", fileSrc);
-    snprintf(devName, sizeof(char) * devNameSize, "%d.txt", fileSrc);
-    rename(devName, outputName);
+
+    snprintf(deviceName, sizeof(char) * deviceNameSize, "%d.txt", fileSrc);
+    rename(deviceName, outputName);
+
+    // Libera estruturas auxiliares
     PQ_free(priQueue);
-    free(devName);
+    free(deviceName);
     free(array);
+
     return fopen(outputName, "r");
 }
