@@ -1,10 +1,10 @@
-#include "../include/externalSort.h"
+#include "../include/external_sort.h"
 #include <unistd.h>
 typedef struct cmpData
 {
     char **data;
-    int *columsToCompare;
-    int columsSize;
+    int *fieldsToCompare;
+    int fieldsSize;
 } Cmp_data;
 typedef struct pq_item
 {
@@ -19,11 +19,11 @@ int compare_data(const void *a, const void *b)
 {
     Cmp_data data1 = *(Cmp_data *)a;
     Cmp_data data2 = *(Cmp_data *)b;
-    for (int i = 0; i < data1.columsSize; i++)
+    for (int i = 0; i < data1.fieldsSize; i++)
     {
-        if (strcmp(data1.data[data1.columsToCompare[i]], data2.data[data2.columsToCompare[i]]) != 0)
+        if (strcmp(data1.data[data1.fieldsToCompare[i]], data2.data[data2.fieldsToCompare[i]]) != 0)
         {
-            return strcmp(data1.data[data1.columsToCompare[i]], data2.data[data2.columsToCompare[i]]);
+            return strcmp(data1.data[data1.fieldsToCompare[i]], data2.data[data2.fieldsToCompare[i]]);
         }
     }
     return 0;
@@ -42,7 +42,7 @@ int compare_PQ_Item(const void *a, const void *b)
     }
 }
 
-FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputName)
+FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputName)
 {
     int devAmnt = 2 * P;
     char *line = NULL;
@@ -88,8 +88,8 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
             N++;
             line[strlen(line) - 1] = '\0';
             Cmp_data data;
-            data.columsSize = columsAmnt;
-            data.columsToCompare = colums;
+            data.fieldsSize = fieldsAmnt;
+            data.fieldsToCompare = fields;
             data.data = line_to_string_array(line, dataSize);
             free(line);
             array[i] = data;
@@ -136,8 +136,8 @@ FILE *sort(FILE *file, int M, int P, int *colums, int columsAmnt, char *outputNa
             item->blockSize = block;
             item->actBlockSize = block;
             item->fileLoop = 0;
-            item->data.columsToCompare = colums;
-            item->data.columsSize = columsAmnt;
+            item->data.fieldsToCompare = fields;
+            item->data.fieldsSize = fieldsAmnt;
             fclose(devs[j]);
             snprintf(devName, sizeof(char) * devNameSize, "%d.txt", j);
             devs[j] = fopen(devName, "r");

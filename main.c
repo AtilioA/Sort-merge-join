@@ -4,7 +4,7 @@
 #include <time.h>
 
 #include "include/utils.h"
-#include "include/externalSort.h"
+#include "include/external_sort.h"
 
 int main(int argc, char *argv[])
 {
@@ -47,6 +47,6 @@ int main(int argc, char *argv[])
     fclose(file2);
     fclose(file1Sort);
     fclose(file2Sort);
-    
+
     return EXIT_SUCCESS;
 }
