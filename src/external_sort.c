@@ -48,11 +48,12 @@ int compare_PQ_Item(const void *a, const void *b)
     }
 }
 
-FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputName)
+FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *outputName)
 {
     int deviceAmnt = 2 * P;
     char *line = NULL;
     long unsigned int n = 0;
+    ssize_t getlineResult = 0;
 
     // Atribui nomes aos dispositivos e cria arquivos
     FILE *devs[deviceAmnt];
@@ -69,7 +70,11 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
     int fileDest = P;
 
     // Conta tamanho dos dados
-    getline(&line, &n, file);
+    getlineResult = getline(&line, &n, file);
+    if (getlineResult <= 0)
+    {
+        return NULL;
+    }
     // Por que + 1?
     int dataSize = count_commas(line) + 1;
     rewind(file);
@@ -85,7 +90,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
             line = NULL;
             n = 0;
 
-            getline(&line, &n, file);
+            getlineResult = getline(&line, &n, file);
             if (feof(file))
             {
                 free(line);
@@ -163,7 +168,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
             line = NULL;
             n = 0;
 
-            getline(&line, &n, devs[j]);
+            getlineResult = getline(&line, &n, devs[j]);
             if (feof(devs[j]))
             {
                 free(line);
@@ -233,7 +238,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
                     line = NULL;
                     n = 0;
 
-                    getline(&line, &n, devs[item->deviceIndex]);
+                    getlineResult = getline(&line, &n, devs[item->deviceIndex]);
                     if (feof(devs[item->deviceIndex]) || line == NULL) // Dispositivo de entrada não possui mais dados
                     {
                         if (line != NULL)
@@ -250,7 +255,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputNa
                     item->data.data = line_to_string_array(line, dataSize);
 
                     PQ_insert(priQueue, item, compare_PQ_Item);
-                    
+
                     free(line);
                 }
             }

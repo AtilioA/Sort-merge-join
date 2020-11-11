@@ -18,6 +18,6 @@
     * fieldsAmnt: a quantidade de campos a serem analisados
     * outputName: o nome do arquivo de saída final, ordenado
 */
-FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, char *outputName);
+FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *outputName);
 
 #endif

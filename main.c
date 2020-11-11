@@ -22,10 +22,10 @@ int main(int argc, char *argv[])
     // Guarda os campos a serem ordenados no segundo arquivo
     char *file2Fields = argv[4];
     // Guarda nome dos arquivos de entrada
-    char *fileIn1 = argv[5];
-    char *fileIn2 = argv[6];
+    char *fileIn1Name = argv[5];
+    char *fileIn2Name = argv[6];
     // Guarda nome do arquivo de saída
-    char *fileOut = argv[7];
+    char *fileOutName = argv[7];
 
     // Conta quantidade de vírgulas (ambos os arquivos devem receber a mesma quantidade de campos a serem ordenados)
     int commaAmnt = count_commas(file1Fields);
@@ -34,8 +34,9 @@ int main(int argc, char *argv[])
     int *fieldsArrayF1 = line_to_int_array(file1Fields, commaAmnt + 1);
     int *fieldsArrayF2 = line_to_int_array(file2Fields, commaAmnt + 1);
 
-    FILE *file1 = fopen(fileIn1, "r");
-    FILE *file2 = fopen(fileIn2, "r");
+    FILE *file1 = fopen(fileIn1Name, "r");
+    FILE *file2 = fopen(fileIn2Name, "r");
+    FILE *fileOut = fopen(fileOutName, "w");
 
     FILE *file1Sort = sort(file1, M, P, fieldsArrayF1, commaAmnt + 1, "sorted1.txt");
     FILE *file2Sort = sort(file2, M, P, fieldsArrayF2, commaAmnt + 1, "sorted2.txt");
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
 
     fclose(file1);
     fclose(file2);
+    fclose(fileOut);
     fclose(file1Sort);
     fclose(file2Sort);
 

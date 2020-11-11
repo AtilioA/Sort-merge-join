@@ -5,7 +5,7 @@
 int count_commas(char *string)
 {
     int commaAmnt = 0;
-    for (int i = 0; i < strlen(string); i++)
+    for (unsigned int i = 0; i < strlen(string); i++)
     {
         if (string[i] == ',')
         {
@@ -15,7 +15,6 @@ int count_commas(char *string)
 
     return commaAmnt;
 }
-
 
 char **line_to_string_array(char *line, int m)
 {
@@ -29,8 +28,9 @@ char **line_to_string_array(char *line, int m)
         // Obtém strings da linha
         char *token = strtok(line, ",");
 
-        array[i] = malloc(sizeof(char) * (strlen(token) + 1));
-        strncpy(array[i], token, (strlen(token) + 1));
+        int lenToken = strlen(token);
+        array[i] = malloc(sizeof(char) * (lenToken + 1));
+        strncpy(array[i], token, (lenToken + 1));
 
         line = NULL;
     }
