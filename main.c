@@ -41,9 +41,6 @@ int main(int argc, char *argv[])
     FILE *file1Sort = sort(file1, M, P, fieldsArrayF1, commaAmnt + 1, "sorted1.txt");
     FILE *file2Sort = sort(file2, M, P, fieldsArrayF2, commaAmnt + 1, "sorted2.txt");
 
-    free(fieldsArrayF1);
-    free(fieldsArrayF2);
-
     fclose(file1);
     fclose(file2);
 
@@ -52,7 +49,9 @@ int main(int argc, char *argv[])
 
     file1Sort = fopen("sorted1.txt", "r");
     file2Sort = fopen("sorted2.txt", "r");
-    join_fields(file1Sort, file2Sort, fieldsArrayF1, fieldsArrayF2, commaAmnt, fileOut);
+    join_fields(file1Sort, file2Sort, fieldsArrayF1, fieldsArrayF2, commaAmnt + 1, fileOut);
+    free(fieldsArrayF1);
+    free(fieldsArrayF2);
 
     fclose(fileOut);
 
