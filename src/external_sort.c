@@ -5,7 +5,7 @@ typedef struct cmpData
 {
     char **data;
     int *fieldsToCompare;
-    int fieldsSize;
+    int fieldAmnt;
 } Cmp_data;
 
 typedef struct pq_item
@@ -23,7 +23,7 @@ int compare_data(const void *a, const void *b)
     Cmp_data dataFile2 = *(Cmp_data *)b;
 
     // Retorna a primeira ocorrência em que os dois campos são iguais
-    for (int i = 0; i < dataFile1.fieldsSize; i++)
+    for (int i = 0; i < dataFile1.fieldAmnt; i++)
     {
         if (strcmp(dataFile1.data[dataFile1.fieldsToCompare[i]], dataFile2.data[dataFile2.fieldsToCompare[i]]) != 0)
         {
@@ -101,7 +101,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
             line[strlen(line) - 1] = '\0';
 
             Cmp_data data;
-            data.fieldsSize = fieldsAmnt;
+            data.fieldAmnt = fieldsAmnt;
             data.fieldsToCompare = fields;
             data.data = line_to_string_array(line, dataSize);
 
@@ -159,7 +159,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
             item->actBlockSize = block;
             item->fileLoop = 0;
             item->data.fieldsToCompare = fields;
-            item->data.fieldsSize = fieldsAmnt;
+            item->data.fieldAmnt = fieldsAmnt;
 
             fclose(devs[j]);
             snprintf(deviceName, sizeof(char) * deviceNameSize, "%d.txt", j);

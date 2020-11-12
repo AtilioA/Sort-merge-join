@@ -19,5 +19,6 @@
     * outputName: o nome do arquivo de saída final, ordenado
 */
 FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *outputName);
+int compare_data(const void *a, const void *b);
 
 #endif

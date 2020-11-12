@@ -2,6 +2,14 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include "../include/external_sort.h"
+
+typedef struct cmpData
+{
+    char **data;
+    int *fieldsToCompare;
+    int fieldAmnt;
+} Cmp_data;
 
 int count_commas(char *string)
 {
@@ -79,49 +87,70 @@ void write_to_file(char *string, FILE *outputFile)
 {
 }
 
-void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *fieldsArrayF2, FILE *fileOut)
+void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *fieldsArrayF2, int fieldAmnt, FILE *fileOut)
 {
     // Inicialização
-    ssize_t getlineResult = 1;
+    ssize_t getlineResult1 = 1;
+    ssize_t getlineResult2 = 1;
     char *lineFile1 = NULL;
     char *lineFile2 = NULL;
     long unsigned int n = 0;
 
-    int compareStrings = 0;
+    int compareFields = 0;
 
     bool hasToReadF1 = true;
     bool hasToReadF2 = true;
 
     char *joinResult = NULL;
 
-    printf("%i\n%i\n%i", !feof(file1Sorted), !feof(file1Sorted), getlineResult);
+    // printf("%i\n%i\n%i", !feof(file1Sorted), !feof(file1Sorted), getlineResult1);
 
     // Enquanto nenhum dos dois arquivos tiver acabado:
-    while (!feof(file1Sorted) && !feof(file2Sorted) && getlineResult)
+    while (!feof(file1Sorted) && !feof(file2Sorted))
     {
         if (hasToReadF1)
         {
             // Lê uma linha de file 1
-            getlineResult = getline(&lineFile1, &n, file1Sorted);
+            getlineResult1 = getline(&lineFile1, &n, file1Sorted);
         }
         if (hasToReadF2)
         {
             // Lê uma linha de file 2
-            getlineResult = getline(&lineFile2, &n, file2Sorted);
+            getlineResult2 = getline(&lineFile2, &n, file2Sorted);
+            printf("2: %i\n", getlineResult2);
         }
 
-        /* Lê campos das linhas */
+        if (getlineResult1 <= 0 || getlineResult2 <= 0)
+        {
+            return;
+        }
+        printf("%s", lineFile1);
+        printf("%s", lineFile2);
 
-        compareStrings = strcmp(lineFile1, lineFile2);
-        printf("cmp:%i\n", compareStrings);
+        // printf("%i, %i\n", getlineResult1, getlineResult2);
+
+        /* Lê campos das linhas */
+        Cmp_data dataLine1;
+        dataLine1.data = lineFile1;
+        dataLine1.fieldsToCompare = line_to_int_array(fieldsArrayF1, fieldAmnt);
+        dataLine1.fieldAmnt = fieldAmnt;
+        Cmp_data dataLine2;
+        dataLine1.data = lineFile2;
+        dataLine1.fieldsToCompare = line_to_int_array(fieldsArrayF2, fieldAmnt);
+        dataLine1.fieldAmnt = fieldAmnt;
+
+        compareFields = compare_data(dataLine1.data, dataLine2.data);
+        printf("cmp:%i\n", compareFields);
 
         // Se forem iguais:
-        if (compareStrings == 0)
+        if (compareFields == 0)
         {
-            printf("1: %s | 2: %s\n\n", lineFile1, lineFile2);
+            // printf("\nLinhas:\n1: %s2: %s\n\n", lineFile1, lineFile2);
 
             // Calcular resultado e escrever no arquivo
+            printf("~Faz join~\n");
             joinResult = join_lines(lineFile1, lineFile2);
+            printf("~Escreve~\n\n");
             write_to_file(joinResult, fileOut);
 
             // Ler próxima linha de file 1 e de file 2
@@ -129,7 +158,7 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
             hasToReadF2 = true;
         }
         // Se linhaFile1 > linhaFile2:
-        if (compareStrings >= 1)
+        if (compareFields >= 1)
         {
             // Ler próxima linha de file 2
             hasToReadF1 = false;
@@ -144,12 +173,12 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
     }
 
     // Finalização
-    if (lineFile1 != NULL)
-    {
-        free(lineFile1);
-    }
-    if (lineFile2 != NULL)
-    {
-        free(lineFile2);
-    }
+    // if (lineFile1 != NULL /*&& hasToReadF1*/)
+    // {
+    //     free(lineFile1);
+    // }
+    // if (lineFile2 != NULL && /*hasToReadF2*/)
+    // {
+    //     free(lineFile2);
+    // }
 }
