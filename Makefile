@@ -37,11 +37,7 @@ run_1: clean main
 run_2: clean main
 	./$(EXE) 3 1000000 0,1,4 4,0,1 input/2/file1.txt input/2/file2.txt output/file_2.txt
 	code -r output/file_2.txt
-
-#  Roda o programa com entrada 3
-# run_3: clean main
-# 	./$(EXE) input/3.txt 5 output/saida_3.txt
-
+	
 # Roda o programa com valgrind e flags úteis (entrada 3)
 val: main
 	valgrind --leak-check=full -v --track-origins=yes \
