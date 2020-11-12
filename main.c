@@ -46,6 +46,9 @@ int main(int argc, char *argv[])
 
     fclose(file1);
     fclose(file2);
+
+    join_fields(file1Sort, file2Sort, fieldsArrayF1, fieldsArrayF2, fileOut);
+
     fclose(fileOut);
     fclose(file1Sort);
     fclose(file2Sort);

@@ -17,6 +17,6 @@ void free_string_array(char **array, int m);
 
 char *join_lines(char *lineFile1, char *lineFile2);
 void write_to_file(FILE *outputFile);
-void join_fields(FILE *file1Sorted, FILE *file2Sorted, FILE *fileOut)
+void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *fieldsArrayF2, FILE *fileOut);
 
 #endif

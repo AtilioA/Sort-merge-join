@@ -79,10 +79,10 @@ void write_to_file(char *string, FILE *outputFile)
 {
 }
 
-void join_fields(FILE *file1Sorted, FILE *file2Sorted, FILE *fileOut)
+void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *fieldsArrayF2, FILE *fileOut)
 {
     // Inicialização
-    ssize_t getlineResult = 0;
+    ssize_t getlineResult = 1;
     char *lineFile1 = NULL;
     char *lineFile2 = NULL;
     long unsigned int n = 0;
@@ -94,8 +94,10 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, FILE *fileOut)
 
     char *joinResult = NULL;
 
+    printf("%i\n%i\n%i", !feof(file1Sorted), !feof(file1Sorted), getlineResult);
+
     // Enquanto nenhum dos dois arquivos tiver acabado:
-    while (!feof(file1Sorted) && !feof(file2Sorted))
+    while (!feof(file1Sorted) && !feof(file2Sorted) && getlineResult)
     {
         if (hasToReadF1)
         {
@@ -108,10 +110,16 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, FILE *fileOut)
             getlineResult = getline(&lineFile2, &n, file2Sorted);
         }
 
-        // Se forem iguais:
+        /* Lê campos das linhas */
+
         compareStrings = strcmp(lineFile1, lineFile2);
+        printf("cmp:%i\n", compareStrings);
+
+        // Se forem iguais:
         if (compareStrings == 0)
         {
+            printf("1: %s | 2: %s\n\n", lineFile1, lineFile2);
+
             // Calcular resultado e escrever no arquivo
             joinResult = join_lines(lineFile1, lineFile2);
             write_to_file(joinResult, fileOut);
@@ -136,5 +144,12 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, FILE *fileOut)
     }
 
     // Finalização
-    // ?
+    if (lineFile1 != NULL)
+    {
+        free(lineFile1);
+    }
+    if (lineFile2 != NULL)
+    {
+        free(lineFile2);
+    }
 }
