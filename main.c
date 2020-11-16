@@ -49,10 +49,13 @@ int main(int argc, char *argv[])
 
     file1Sort = fopen("sorted1.txt", "r");
     file2Sort = fopen("sorted2.txt", "r");
+
     join_fields(file1Sort, file2Sort, fieldsArrayF1, fieldsArrayF2, commaAmnt + 1, fileOut);
+
     free(fieldsArrayF1);
     free(fieldsArrayF2);
-
+    fclose(file1Sort);
+    fclose(file2Sort);
     fclose(fileOut);
 
     return EXIT_SUCCESS;

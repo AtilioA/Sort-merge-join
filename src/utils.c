@@ -82,10 +82,8 @@ void free_string_array(char **array, int m)
 
 char *join_lines(char *lineFile1, char *lineFile2)
 {
+    printf("Join de linhas %s e %s\n", lineFile1, lineFile2);
     return lineFile1;
-}
-void write_to_file(char *string, FILE *outputFile)
-{
 }
 
 void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *fieldsArrayF2, int fieldAmnt, FILE *fileOut)
@@ -103,8 +101,6 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
     bool hasToReadF2 = true;
 
     char *joinResult = NULL;
-
-    // printf("%i\n%i\n%i", !feof(file1Sorted), !feof(file1Sorted), getlineResult1);
 
     // Enquanto nenhum dos dois arquivos tiver acabado:
     while (!feof(file1Sorted) && !feof(file2Sorted))
@@ -126,6 +122,8 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
 
         if (getlineResult1 <= 0 || getlineResult2 <= 0)
         {
+            free(lineFile1);
+            free(lineFile2);
             return;
         }
         printf("%s\n", lineFile1);
@@ -139,6 +137,7 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
         dataLine1.data = line_to_string_array(lineFile1, dataSize1);
         dataLine1.fieldsToCompare = fieldsArrayF1;
         dataLine1.fieldAmnt = fieldAmnt;
+
         Cmp_data dataLine2;
         int dataSize2 = count_commas(lineFile2) + 1;
         dataLine2.data = line_to_string_array(lineFile2, dataSize2);
@@ -149,16 +148,17 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
         printf("cmp:%i\n", compareFields);
         free_string_array(dataLine1.data, dataSize1);
         free_string_array(dataLine2.data, dataSize2);
+
         // Se forem iguais:
         if (compareFields == 0)
         {
-            // printf("\nLinhas:\n1: %s2: %s\n\n", lineFile1, lineFile2);
+            printf("\nLinhas:\n1: %s2: %s\n\n", lineFile1, lineFile2);
 
             // Calcular resultado e escrever no arquivo
             printf("~Faz join~\n");
             joinResult = join_lines(lineFile1, lineFile2);
-            printf("~Escreve~\n\n");
-            write_to_file(joinResult, fileOut);
+            printf("~Escreve %s~\n\n", lineFile1);
+            fprintf(fileOut, "%s\n", joinResult);
 
             // Ler próxima linha de file 1 e de file 2
             hasToReadF1 = true;

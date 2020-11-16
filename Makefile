@@ -2,7 +2,7 @@
 OBJ      := obj
 SRC      := src
 INC      := include
-CFLAGS   := -lm -g -O2 -Wall -pedantic -Wextra -Wwrite-strings
+CFLAGS   := -lm -g -O2 -Wall -pedantic -Wextra -Wwrite-strings -Wno-stringop-overflow
 EXE 	 := trab2
 PROJETO  := main
 
