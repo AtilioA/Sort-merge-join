@@ -182,6 +182,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
 
             free(line);
         }
+
         // Reabre os dispositivos de saída como escrita
         for (int j = fileDest; j < fileDest + P; j++)
         {
@@ -189,6 +190,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
             snprintf(deviceName, sizeof(char) * deviceNameSize, "%d.txt", j);
             devs[j] = fopen(deviceName, "w");
         }
+
         int fileLoop = 0;
         while (!PQ_empty(priQueue))
         {
@@ -260,6 +262,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
                 }
             }
         }
+        // que?
         if (fileDest == P)
         {
             fileDest = 0;

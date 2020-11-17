@@ -80,10 +80,61 @@ void free_string_array(char **array, int m)
     free(array);
 }
 
-char *join_lines(char *lineFile1, char *lineFile2)
+void join_lines(char *lineFile1, char *lineFile2, int *fieldsArrayF1, int *fieldsArrayF2, int fieldAmnt, FILE *fileOut)
 {
-    printf("Join de linhas %s e %s\n", lineFile1, lineFile2);
-    return lineFile1;
+    int i = 0;
+    // printf("Join de linhas %s e %s\n", lineFile1, lineFile2);
+
+    int lengthLine1 = count_commas(lineFile1) + 1;
+    int lengthLine2 = count_commas(lineFile2) + 1;
+
+    char **line1 = line_to_string_array(lineFile1, lengthLine1);
+    char **line2 = line_to_string_array(lineFile2, lengthLine2);
+
+    // for (i = 0; i < lengthLine1; i++)
+    // {
+    //     printf("%s\n", line1[i]);
+    // }
+
+    for (i = 0; i < fieldAmnt; i++)
+    {
+        if (i == 0)
+        {
+            fprintf(fileOut, "%s", line1[fieldsArrayF1[i]]);
+        }
+        else
+        {
+            fprintf(fileOut, ",%s", line1[fieldsArrayF1[i]]);
+        }
+
+        line1[fieldsArrayF1[i]] = "*";
+        line2[fieldsArrayF2[i]] = "*";
+    }
+
+    if (strcmp(line1[0], "*") != 0)
+    {
+        fprintf(fileOut, ",%s", line1[0]);
+    }
+    for (i = 1; i < lengthLine1; i++)
+    {
+        if (strcmp(line1[i], "*") != 0)
+        {
+            fprintf(fileOut, ",%s", line1[i]);
+        }
+    }
+
+    if (strcmp(line2[0], "*") != 0)
+    {
+        fprintf(fileOut, ",%s", line2[0]);
+    }
+    for (i = 1; i < lengthLine2; i++)
+    {
+        if (strcmp(line2[i], "*") != 0)
+        {
+            fprintf(fileOut, ",%s", line2[i]);
+        }
+    }
+    fprintf(fileOut, "\n");
 }
 
 void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *fieldsArrayF2, int fieldAmnt, FILE *fileOut)
@@ -99,8 +150,6 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
 
     bool hasToReadF1 = true;
     bool hasToReadF2 = true;
-
-    char *joinResult = NULL;
 
     // Enquanto nenhum dos dois arquivos tiver acabado:
     while (!feof(file1Sorted) && !feof(file2Sorted))
@@ -126,8 +175,8 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
             free(lineFile2);
             return;
         }
-        printf("%s\n", lineFile1);
-        printf("%s\n", lineFile2);
+        // printf("%s\n", lineFile1);
+        // printf("%s\n", lineFile2);
 
         // printf("%i, %i\n", getlineResult1, getlineResult2);
 
@@ -145,20 +194,18 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
         dataLine2.fieldAmnt = fieldAmnt;
 
         compareFields = compare_data(&dataLine1, &dataLine2);
-        printf("cmp:%i\n", compareFields);
+        // printf("cmp:%i\n", compareFields);
         free_string_array(dataLine1.data, dataSize1);
         free_string_array(dataLine2.data, dataSize2);
 
         // Se forem iguais:
         if (compareFields == 0)
         {
-            printf("\nLinhas:\n1: %s2: %s\n\n", lineFile1, lineFile2);
+            // printf("\nLinhas:\n1: %s2: %s\n\n", lineFile1, lineFile2);
 
             // Calcular resultado e escrever no arquivo
-            printf("~Faz join~\n");
-            joinResult = join_lines(lineFile1, lineFile2);
-            printf("~Escreve %s~\n\n", lineFile1);
-            fprintf(fileOut, "%s\n", joinResult);
+            // printf("~Faz join~\n");
+            join_lines(lineFile1, lineFile2, fieldsArrayF1, fieldsArrayF2, fieldAmnt, fileOut);
 
             // Ler próxima linha de file 1 e de file 2
             hasToReadF1 = true;
