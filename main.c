@@ -5,6 +5,7 @@
 
 #include "include/utils.h"
 #include "include/external_sort.h"
+#include "include/join.h"
 
 int main(int argc, char *argv[])
 {

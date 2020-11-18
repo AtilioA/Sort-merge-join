@@ -7,8 +7,11 @@ EXE 	 := trab2
 PROJETO  := main
 
 # Cria objetos de todos os arquivos de código-fonte para então linká-los no programa final
-main: clean $(OBJ)/utils.o $(OBJ)/PQ.o $(OBJ)/external_sort.o $(OBJ)/$(PROJETO).o
+main: clean $(OBJ)/join.o $(OBJ)/utils.o $(OBJ)/PQ.o $(OBJ)/external_sort.o $(OBJ)/$(PROJETO).o
 	gcc $(OBJ)/*.o -o $(EXE) $(CFLAGS)
+
+$(OBJ)/join.o: $(SRC)/join.c $(INC)/join.h
+	gcc -c $(CFLAGS) "$(SRC)/join.c" -o "$(OBJ)/join.o"
 
 $(OBJ)/utils.o: $(SRC)/utils.c $(INC)/utils.h
 	gcc -c $(CFLAGS) "$(SRC)/utils.c" -o "$(OBJ)/utils.o"
