@@ -35,7 +35,17 @@ int main(int argc, char *argv[])
     int *fieldsArrayF2 = line_to_int_array(file2Fields, commaAmnt + 1);
 
     FILE *file1 = fopen(fileIn1Name, "r");
+    if (file1 == NULL)
+    {
+        printf("Não foi possível abrir %s", fileIn1Name);
+        return EXIT_FAILURE;
+    }
     FILE *file2 = fopen(fileIn2Name, "r");
+    if (file2 == NULL)
+    {
+        printf("Não foi possível abrir %s", fileIn2Name);
+        return EXIT_FAILURE;
+    }
     FILE *fileOut = fopen(fileOutName, "w");
 
     FILE *file1Sort = sort(file1, M, P, fieldsArrayF1, commaAmnt + 1, "sorted1.txt");
