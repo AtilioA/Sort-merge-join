@@ -157,16 +157,24 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
         if (hasToReadF1)
         {
             // Lê uma linha de file 1
-            getlineResult1 = getline(&lineFile1, &n, file1Sorted);
+            lineFile1 = NULL;
             n = 0;
-            lineFile1[strlen(lineFile1) - 1] = '\0';
+            getlineResult1 = getline(&lineFile1, &n, file1Sorted);
+            if (!feof(file1Sorted))
+            {
+                lineFile1[strlen(lineFile1) - 1] = '\0';
+            }
         }
         if (hasToReadF2)
         {
             // Lê uma linha de file 2
-            getlineResult2 = getline(&lineFile2, &n, file2Sorted);
+            lineFile2 = NULL;
             n = 0;
-            lineFile2[strlen(lineFile2) - 1] = '\0';
+            getlineResult2 = getline(&lineFile2, &n, file2Sorted);
+            if (!feof(file2Sorted))
+            {
+                lineFile2[strlen(lineFile2) - 1] = '\0';
+            }
         }
 
         if (getlineResult1 <= 0 || getlineResult2 <= 0)
