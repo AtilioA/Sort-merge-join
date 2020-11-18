@@ -52,7 +52,9 @@ valtxt: main
 	valgrind --leak-check=full -v --show-leak-kinds=all --track-origins=yes --verbose --log-file="valgrind-out.txt" ./$(EXE) 3 1000000 1,0 0,2 input/file1.txt input/file2.txt output/fileOut2.txt
 
 # Limpa objetos e o executável do programa
-clean:
+clean: #cleantxt
 	-rm $(OBJ)/*.o
 	-rm $(EXE)
+
+cleantxt:
 	-rm *.txt

@@ -111,8 +111,8 @@ void join_lines(char *lineFile1, char *lineFile2, int *fieldsArrayF1, int *field
         }
         free(line1[fieldsArrayF1[i]]);
         free(line2[fieldsArrayF2[i]]);
-        line1[fieldsArrayF1[i]] = "*";
-        line2[fieldsArrayF2[i]] = "*";
+        line1[fieldsArrayF1[i]] = (char *)'*';
+        line2[fieldsArrayF2[i]] = (char *)'*';
     }
 
     if (strcmp(line1[0], "*") != 0)

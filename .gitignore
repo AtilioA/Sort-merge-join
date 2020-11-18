@@ -53,7 +53,9 @@ dkms.conf
 
 # Arquivos relativos ao projeto
 trab*
+test*
 /*.txt
+*.csv
 *.zip
 *.png
 *.js
