@@ -2,12 +2,12 @@
 #include <unistd.h>
 
 // Struct para comparação de linhas
-typedef struct cmpData
+struct cmp_data
 {
     char **data;
     int *fieldsToCompare;
     int fieldAmnt;
-} Cmp_data;
+};
 
 // Struct representando um item da heap
 typedef struct pq_item
@@ -16,13 +16,29 @@ typedef struct pq_item
     int blockSize;
     int actBlockSize;
     int fileLoop;
-    Cmp_data data;
+    Cmp_Data data;
 } PQ_Item;
 
-int compare_Cmp_data(const void *a, const void *b)
+Cmp_Data *create_cmp_data(char **data, int *fieldsToCompare, int fieldAmnt)
 {
-    Cmp_data dataFile1 = *(Cmp_data *)a;
-    Cmp_data dataFile2 = *(Cmp_data *)b;
+    Cmp_Data *cmpData = malloc(sizeof(Cmp_Data));
+
+    cmpData->data = data;
+    cmpData->fieldsToCompare = fieldsToCompare;
+    cmpData->fieldAmnt = fieldAmnt;
+
+    return cmpData;
+}
+
+void free_Cmp_Data_data(Cmp_Data *cmpData, int dataSize)
+{
+    free_string_array(cmpData->data, dataSize);
+}
+
+int compare_Cmp_Data(const void *a, const void *b)
+{
+    Cmp_Data dataFile1 = *(Cmp_Data *)a;
+    Cmp_Data dataFile2 = *(Cmp_Data *)b;
 
     // Retorna a primeira ocorrência em que os dois campos são iguais
     for (int i = 0; i < dataFile1.fieldAmnt; i++)
@@ -44,7 +60,7 @@ int compare_PQ_Item(const void *a, const void *b)
 
     if (f1->fileLoop == f2->fileLoop)
     {
-        return compare_Cmp_data(&(f1->data), &(f2->data)) > 0;
+        return compare_Cmp_Data(&(f1->data), &(f2->data)) > 0;
     }
     else
     {
@@ -70,7 +86,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
     }
 
     int N = 0;
-    Cmp_data *array = malloc(sizeof(Cmp_data) * M);
+    Cmp_Data *array = malloc(sizeof(Cmp_Data) * M);
     int fileDest = P;
 
     // Conta tamanho dos dados
@@ -105,7 +121,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
             N++;
             line[strlen(line) - 1] = '\0';
 
-            Cmp_data data;
+            Cmp_Data data;
             data.fieldAmnt = fieldsAmnt;
             data.fieldsToCompare = fields;
             data.data = line_to_string_array(line, dataSize);
@@ -116,7 +132,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
         }
 
         // Ordena o bloco
-        qsort(array, blockRead, sizeof(Cmp_data), compare_Cmp_data);
+        qsort(array, blockRead, sizeof(Cmp_Data), compare_Cmp_Data);
 
         if (fileDest >= 2 * P)
         {

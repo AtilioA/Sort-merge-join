@@ -11,6 +11,8 @@
 #include "PQ.h"
 #include "utils.h"
 
+typedef struct cmp_data Cmp_Data;
+
 /* Ordena um arquivo dados:
     * M: número de registros possíveis de serem armazenados na memória
     * P: número de dispositivos de armazenamento disponíveis
@@ -20,7 +22,12 @@
 */
 FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *outputName);
 
-// Comparador de TAD Cmp_data
-int compare_Cmp_data(const void *a, const void *b);
+// Comparador de TAD Cmp_Data
+int compare_Cmp_Data(const void *a, const void *b);
+
+// Inicializa um objeto do tipo Cmp_Data
+Cmp_Data *create_cmp_data(char **data, int *fieldsToCompare, int fieldAmnt);
+// Libera atributo data de um objeto do tipo Cmp_Data
+void free_Cmp_Data_data(Cmp_Data *cmpData, int dataSize);
 
 #endif
