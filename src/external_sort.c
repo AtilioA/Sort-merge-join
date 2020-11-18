@@ -96,7 +96,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
         return NULL;
     }
 
-    // Por que + 1?
+    // Quantidade de campos da linha
     int dataSize = count_commas(line) + 1;
     rewind(file);
     free(line);
@@ -221,7 +221,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
                 for (int l = 0; l < block * P; l++)
                 {
                     item = PQ_del_min(priQueue, compare_PQ_Item);
-                    if (item == NULL) // heap vazia?
+                    if (item == NULL) // Não tem mais arquivos na heap
                     {
                         break;
                     }
@@ -283,7 +283,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
                 }
             }
         }
-        // que?
+        // Muda os dispositivos de entrada para dispostivos de saida
         if (fileDest == P)
         {
             fileDest = 0;
@@ -292,6 +292,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
         {
             fileDest = P;
         }
+        // Muda os dispositivos de saida para entrada
         if (fileSrc == P)
         {
             fileSrc = 0;
@@ -300,6 +301,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
         {
             fileSrc = P;
         }
+        // M*P^k
         block *= P;
     }
     for (int i = 0; i < deviceAmnt; i++)
