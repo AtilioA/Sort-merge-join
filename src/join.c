@@ -115,8 +115,11 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
         Cmp_Data *CmpLine2 = create_cmp_data(dataLine2, fieldsArrayF2, fieldAmnt);
 
         compareFields = compare_Cmp_Data(CmpLine1, CmpLine2);
-        printf("cmp:%i\n", compareFields);
-
+        //printf("cmp:%i\n", compareFields);
+        free_Cmp_Data_data(CmpLine1, dataSize1);
+        free_Cmp_Data_data(CmpLine2, dataSize2);
+        free(CmpLine1);
+        free(CmpLine2);
         // Se forem iguais:
         if (compareFields == 0)
         {
