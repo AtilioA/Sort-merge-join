@@ -75,7 +75,10 @@ void free_string_array(char **array, int m)
 {
     for (int i = 0; i < m; i++)
     {
-        free(array[i]);
+        if (strcmp(array[i], "*") != 0)
+        {
+            free(array[i]);
+        }
     }
     free(array);
 }
@@ -106,7 +109,8 @@ void join_lines(char *lineFile1, char *lineFile2, int *fieldsArrayF1, int *field
         {
             fprintf(fileOut, ",%s", line1[fieldsArrayF1[i]]);
         }
-
+        free(line1[fieldsArrayF1[i]]);
+        free(line2[fieldsArrayF2[i]]);
         line1[fieldsArrayF1[i]] = "*";
         line2[fieldsArrayF2[i]] = "*";
     }
@@ -135,6 +139,8 @@ void join_lines(char *lineFile1, char *lineFile2, int *fieldsArrayF1, int *field
         }
     }
     fprintf(fileOut, "\n");
+    free_string_array(line1, lengthLine1);
+    free_string_array(line2, lengthLine2);
 }
 
 void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *fieldsArrayF2, int fieldAmnt, FILE *fileOut)
