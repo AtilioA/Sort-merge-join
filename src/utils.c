@@ -94,11 +94,7 @@ void join_lines(char *lineFile1, char *lineFile2, int *fieldsArrayF1, int *field
     char **line1 = line_to_string_array(lineFile1, lengthLine1);
     char **line2 = line_to_string_array(lineFile2, lengthLine2);
 
-    // for (i = 0; i < lengthLine1; i++)
-    // {
-    //     printf("%s\n", line1[i]);
-    // }
-
+    // Marca campos para join
     for (i = 0; i < fieldAmnt; i++)
     {
         if (i == 0)
@@ -111,15 +107,12 @@ void join_lines(char *lineFile1, char *lineFile2, int *fieldsArrayF1, int *field
         }
         free(line1[fieldsArrayF1[i]]);
         free(line2[fieldsArrayF2[i]]);
-        line1[fieldsArrayF1[i]] = (char *)'*';
-        line2[fieldsArrayF2[i]] = (char *)'*';
+        line1[fieldsArrayF1[i]] = (char *)"*";
+        line2[fieldsArrayF2[i]] = (char *)"*";
     }
 
-    if (strcmp(line1[0], "*") != 0)
-    {
-        fprintf(fileOut, ",%s", line1[0]);
-    }
-    for (i = 1; i < lengthLine1; i++)
+    // Escreve campos de file1
+    for (i = 0; i < lengthLine1; i++)
     {
         if (strcmp(line1[i], "*") != 0)
         {
@@ -127,11 +120,7 @@ void join_lines(char *lineFile1, char *lineFile2, int *fieldsArrayF1, int *field
         }
     }
 
-    if (strcmp(line2[0], "*") != 0)
-    {
-        fprintf(fileOut, ",%s", line2[0]);
-    }
-    for (i = 1; i < lengthLine2; i++)
+    for (i = 0; i < lengthLine2; i++)
     {
         if (strcmp(line2[i], "*") != 0)
         {
@@ -139,6 +128,7 @@ void join_lines(char *lineFile1, char *lineFile2, int *fieldsArrayF1, int *field
         }
     }
     fprintf(fileOut, "\n");
+
     free_string_array(line1, lengthLine1);
     free_string_array(line2, lengthLine2);
 }
@@ -207,7 +197,7 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
         dataLine2.fieldsToCompare = fieldsArrayF2;
         dataLine2.fieldAmnt = fieldAmnt;
 
-        compareFields = compare_data(&dataLine1, &dataLine2);
+        compareFields = compare_Cmp_data(&dataLine1, &dataLine2);
         // printf("cmp:%i\n", compareFields);
         free_string_array(dataLine1.data, dataSize1);
         free_string_array(dataLine2.data, dataSize2);
@@ -218,7 +208,6 @@ void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *
             // printf("\nLinhas:\n1: %s2: %s\n\n", lineFile1, lineFile2);
 
             // Calcular resultado e escrever no arquivo
-            // printf("~Faz join~\n");
             join_lines(lineFile1, lineFile2, fieldsArrayF1, fieldsArrayF2, fieldAmnt, fileOut);
 
             // Ler próxima linha de file 1 e de file 2

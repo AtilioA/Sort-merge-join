@@ -1,6 +1,7 @@
 #include "../include/external_sort.h"
 #include <unistd.h>
 
+// Struct para comparação de linhas
 typedef struct cmpData
 {
     char **data;
@@ -8,6 +9,7 @@ typedef struct cmpData
     int fieldAmnt;
 } Cmp_data;
 
+// Struct representando um item da heap
 typedef struct pq_item
 {
     int deviceIndex;
@@ -17,7 +19,7 @@ typedef struct pq_item
     Cmp_data data;
 } PQ_Item;
 
-int compare_data(const void *a, const void *b)
+int compare_Cmp_data(const void *a, const void *b)
 {
     Cmp_data dataFile1 = *(Cmp_data *)a;
     Cmp_data dataFile2 = *(Cmp_data *)b;
@@ -33,6 +35,8 @@ int compare_data(const void *a, const void *b)
 
     return 0;
 }
+
+// Comparador de PQ_Item
 int compare_PQ_Item(const void *a, const void *b)
 {
     PQ_Item *f1 = (PQ_Item *)a;
@@ -40,7 +44,7 @@ int compare_PQ_Item(const void *a, const void *b)
 
     if (f1->fileLoop == f2->fileLoop)
     {
-        return compare_data(&(f1->data), &(f2->data)) > 0;
+        return compare_Cmp_data(&(f1->data), &(f2->data)) > 0;
     }
     else
     {
@@ -75,6 +79,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
     {
         return NULL;
     }
+
     // Por que + 1?
     int dataSize = count_commas(line) + 1;
     rewind(file);
@@ -111,7 +116,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
         }
 
         // Ordena o bloco
-        qsort(array, blockRead, sizeof(Cmp_data), compare_data);
+        qsort(array, blockRead, sizeof(Cmp_data), compare_Cmp_data);
 
         if (fileDest >= 2 * P)
         {
@@ -196,7 +201,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
         {
             for (int j = fileDest; j < fileDest + P; j++, fileLoop++)
             {
-                // Para cada dispositivo de saída ,recolhe M*P^k linhas no máximo
+                // Para cada dispositivo de saída, recolhe M*P^k linhas no máximo
                 for (int l = 0; l < block * P; l++)
                 {
                     item = PQ_del_min(priQueue, compare_PQ_Item);
@@ -221,7 +226,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
                         item->actBlockSize--;
                     }
 
-                    if (item->fileLoop != fileLoop) // Não há mais dispositivos para esse dispositivo de saída, vá para o pŕoximo
+                    if (item->fileLoop != fileLoop) // Não há mais dispositivos para esse dispositivo de saída; vá para o próximo
                     {
                         PQ_insert(priQueue, item, compare_PQ_Item);
                         break;

@@ -15,8 +15,10 @@ int *line_to_int_array(char *line, int m);
 // Libera um vetor de strings da memória
 void free_string_array(char **array, int m);
 
+// Realiza join de linhas de dois arquivos de acordo com seus campos de interesse
 void join_lines(char *lineFile1, char *lineFile2, int *fieldsArrayF1, int *fieldsArrayF2, int fieldAmnt, FILE *fileOut);
-void write_to_file(char *string, FILE *outputFile);
+
+// Realiza join de dois arquivos
 void join_fields(FILE *file1Sorted, FILE *file2Sorted, int *fieldsArrayF1, int *fieldsArrayF2, int fieldAmnt, FILE *fileOut);
 
 #endif
