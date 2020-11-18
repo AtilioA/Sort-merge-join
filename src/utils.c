@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 int count_commas(char *string)
 {
     int commaAmnt = 0;

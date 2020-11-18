@@ -283,6 +283,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
                 }
             }
         }
+
         // Muda os dispositivos de entrada para dispostivos de saida
         if (fileDest == P)
         {
@@ -292,6 +293,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
         {
             fileDest = P;
         }
+
         // Muda os dispositivos de saida para entrada
         if (fileSrc == P)
         {
@@ -301,6 +303,7 @@ FILE *sort(FILE *file, int M, int P, int *fields, int fieldsAmnt, const char *ou
         {
             fileSrc = P;
         }
+        
         // M*P^k
         block *= P;
     }
